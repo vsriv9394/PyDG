@@ -6,8 +6,8 @@ def savehook(main):
   pass
 ## Make square grid
 L = 10.                       #|  length
-Nel = np.array([8,8,2,1])   #|  elements in x,y,z
-order =np.array([4,4,1,1])                       #|  spatial order
+Nel = np.array([64,64,1,1])   #|  elements in x,y,z
+order =np.array([1,1,1,1])                       #|  spatial order
 quadpoints = np.array([order[0],order[1],order[2],order[3] ])  #|  number of quadrature points. 2x the order is reccomended
 mu = 0.#5                       #|  viscocity
 #x = -np.cos( np.pi*np.linspace(0,Nel[0]+1 - 1 ,Nel[0] + 1) /(Nel[0] + 1 -1) )*L/2. + L/2.
@@ -18,13 +18,13 @@ y = np.linspace(0,L,Nel[1]+1)      #|
 z = np.linspace(0,L,Nel[2]+1)      #|
 x,y,z = np.meshgrid(x,y,z,indexing='ij')
 t = 0                              #|  simulation start time
-dt = 0.025
+dt = 0.1/Nel[0]
 et = 10.                           #|  simulation end time
-save_freq = 10.                      #|  frequency to save output and print to screen
+save_freq = Nel[0]*10./16.                      #|  frequency to save output and print to screen
 eqn_str = 'Navier-Stokes'          #|  equation set
 schemes = ('roe','Inviscid')             #|  inviscid and viscous flux schemes
-procx = 1                         #|  processor decomposition in x
-procy = 1                          #|  same in y. Note that procx*procy needs to equal total number of procs
+procx = 2                         #|  processor decomposition in x
+procy = 2                          #|  same in y. Note that procx*procy needs to equal total number of procs
 procz = 1
 
 right_bc = 'periodic'
@@ -51,6 +51,7 @@ nonlinear_solver_str = 'Newton'
 #== Assign initial condition function. Note that you can alternatively define this here
 #== function layout is my_ic_function(x,y,z), where x,y,z are the decomposed quadrature points
 IC_function = vortexICS                #|
+basis_functions_str = 'TensorDot_FV2'
                                    #|
 execfile('../../src_spacetime/PyDG.py')      #|  call the solver
 correct = 174.914240014

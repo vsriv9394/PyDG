@@ -18,9 +18,9 @@ def savehook(main):
 
 ## Make square grid
 L = 1.                       #|  length
-Nel = np.array([100,1,1,1])   #|  elements in x,y,z
+Nel = np.array([1024,1,1,1])   #|  elements in x,y,z
 order =np.array([1,1,1,1])                       #|  spatial order
-quadpoints = order*2               #|  number of quadrature points. 2x the order is reccomended
+quadpoints = order               #|  number of quadrature points. 2x the order is reccomended
 quadpoints[2::] = order[2::]
 x = np.linspace(0,L,Nel[0]+1)      #|  x, y, and z
 y = np.linspace(0,L,Nel[1]+1)      #|
@@ -28,12 +28,12 @@ z = np.linspace(0,L,Nel[2]+1)      #|
 x,y,z = np.meshgrid(x,y,z,indexing='ij')
 mu = 0.
 t = 0                              #|  simulation start time
-dt = 0.000125                       #|  simulation time step
+dt = 0.1/Nel[0] #0.000125                       #|  simulation time step
 et = 0.2                           #|  simulation end time
-save_freq = 10                      #|  frequency to save output and print to screen
+save_freq = Nel[0]/16                      #|  frequency to save output and print to screen
 eqn_str = 'Navier-Stokes'          #|  equation set
 schemes = ('roe','Inviscid')             #|  inviscid and viscous flux schemes
-procx = 1                          #|  processor decomposition in x
+procx = 4                          #|  processor decomposition in x
 procy = 1                          #|  same in y. Note that procx*procy needs to equal total number of procs
 time_integration = 'SSP_RK3'   #| 
 
@@ -55,5 +55,6 @@ BCs = [right_bc,right_bc_args,top_bc,top_bc_args,left_bc,left_bc_args,bottom_bc,
 #== Assign initial condition function. Note that you can alternatively define this here
 #== function layout is my_ic_function(x,y,z), where x,y,z are the decomposed quadrature points
 IC_function = shocktubeIC                #|
+basis_functions_str = 'TensorDot_FV2'
                                    #|
 execfile('../../src_spacetime/PyDG.py')      #|  call the solver

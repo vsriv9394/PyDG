@@ -53,30 +53,100 @@ def getGlobGrid(main,x,y,z,zeta0,zeta1,zeta2):
   x5 = x[None,None,None,1:: ,0:-1,1:: ]
   x6 = x[None,None,None,0:-1,1:: ,1:: ]
   x7 = x[None,None,None,1:: ,1:: ,1:: ]
+
   xG = (x1*(eta - 1)*(mu - 1)*(zeta + 1))/8 - (x0*(eta - 1)*(mu - 1)*(zeta - 1))/8 + (x2*(eta + 1)*(mu - 1)*(zeta - 1))/8 - (x3*(eta + 1)*(mu - 1)*(zeta + 1))/8 + (x4*(eta - 1)*(mu + 1)*(zeta - 1))/8     - (x5*(eta - 1)*(mu + 1)*(zeta + 1))/8 - (x6*(eta + 1)*(mu + 1)*(zeta - 1))/8 + (x7*(eta + 1)*(mu + 1)*(zeta + 1))/8
-  x0 = y[None,None,None,0:-1,0:-1,0:-1]
-  x1 = y[None,None,None,1:: ,0:-1,0:-1]
-  x2 = y[None,None,None,0:-1,1:: ,0:-1]
-  x3 = y[None,None,None,1:: ,1:: ,0:-1]
-  x4 = y[None,None,None,0:-1,0:-1,1:: ]
-  x5 = y[None,None,None,1:: ,0:-1,1:: ]
-  x6 = y[None,None,None,0:-1,1:: ,1:: ]
-  x7 = y[None,None,None,1:: ,1:: ,1:: ]
+  
+  y0 = y[None,None,None,0:-1,0:-1,0:-1]
+  y1 = y[None,None,None,1:: ,0:-1,0:-1]
+  y2 = y[None,None,None,0:-1,1:: ,0:-1]
+  y3 = y[None,None,None,1:: ,1:: ,0:-1]
+  y4 = y[None,None,None,0:-1,0:-1,1:: ]
+  y5 = y[None,None,None,1:: ,0:-1,1:: ]
+  y6 = y[None,None,None,0:-1,1:: ,1:: ]
+  y7 = y[None,None,None,1:: ,1:: ,1:: ]
 
-  yG = (x1*(eta - 1)*(mu - 1)*(zeta + 1))/8 - (x0*(eta - 1)*(mu - 1)*(zeta - 1))/8 + (x2*(eta + 1)*(mu - 1)*(zeta - 1))/8 - (x3*(eta + 1)*(mu - 1)*(zeta + 1))/8 + (x4*(eta - 1)*(mu + 1)*(zeta - 1))/8     - (x5*(eta - 1)*(mu + 1)*(zeta + 1))/8 - (x6*(eta + 1)*(mu + 1)*(zeta - 1))/8 + (x7*(eta + 1)*(mu + 1)*(zeta + 1))/8
+  yG = (y1*(eta - 1)*(mu - 1)*(zeta + 1))/8 - (y0*(eta - 1)*(mu - 1)*(zeta - 1))/8 + (y2*(eta + 1)*(mu - 1)*(zeta - 1))/8 - (y3*(eta + 1)*(mu - 1)*(zeta + 1))/8 + (y4*(eta - 1)*(mu + 1)*(zeta - 1))/8     - (y5*(eta - 1)*(mu + 1)*(zeta + 1))/8 - (y6*(eta + 1)*(mu + 1)*(zeta - 1))/8 + (y7*(eta + 1)*(mu + 1)*(zeta + 1))/8
 
-  x0 = z[None,None,None,0:-1,0:-1,0:-1]
-  x1 = z[None,None,None,1:: ,0:-1,0:-1]
-  x2 = z[None,None,None,0:-1,1:: ,0:-1]
-  x3 = z[None,None,None,1:: ,1:: ,0:-1]
-  x4 = z[None,None,None,0:-1,0:-1,1:: ]
-  x5 = z[None,None,None,1:: ,0:-1,1:: ]
-  x6 = z[None,None,None,0:-1,1:: ,1:: ]
-  x7 = z[None,None,None,1:: ,1:: ,1:: ]
+  z0 = z[None,None,None,0:-1,0:-1,0:-1]
+  z1 = z[None,None,None,1:: ,0:-1,0:-1]
+  z2 = z[None,None,None,0:-1,1:: ,0:-1]
+  z3 = z[None,None,None,1:: ,1:: ,0:-1]
+  z4 = z[None,None,None,0:-1,0:-1,1:: ]
+  z5 = z[None,None,None,1:: ,0:-1,1:: ]
+  z6 = z[None,None,None,0:-1,1:: ,1:: ]
+  z7 = z[None,None,None,1:: ,1:: ,1:: ]
 
-  zG = (x1*(eta - 1)*(mu - 1)*(zeta + 1))/8 - (x0*(eta - 1)*(mu - 1)*(zeta - 1))/8 + (x2*(eta + 1)*(mu - 1)*(zeta - 1))/8 - (x3*(eta + 1)*(mu - 1)*(zeta + 1))/8 + (x4*(eta - 1)*(mu + 1)*(zeta - 1))/8     - (x5*(eta - 1)*(mu + 1)*(zeta + 1))/8 - (x6*(eta + 1)*(mu + 1)*(zeta - 1))/8 + (x7*(eta + 1)*(mu + 1)*(zeta + 1))/8
+  zG = (z1*(eta - 1)*(mu - 1)*(zeta + 1))/8 - (z0*(eta - 1)*(mu - 1)*(zeta - 1))/8 + (z2*(eta + 1)*(mu - 1)*(zeta - 1))/8 - (z3*(eta + 1)*(mu - 1)*(zeta + 1))/8 + (z4*(eta - 1)*(mu + 1)*(zeta - 1))/8     - (z5*(eta - 1)*(mu + 1)*(zeta + 1))/8 - (z6*(eta + 1)*(mu + 1)*(zeta - 1))/8 + (z7*(eta + 1)*(mu + 1)*(zeta + 1))/8
 
-  return xG[:,:,:,main.sx,main.sy,main.sz],yG[:,:,:,main.sx,main.sy,main.sz],zG[:,:,:,main.sx,main.sy,main.sz]
+  LSQ_factors = np.zeros((6,3,2,Npx-1,Npy-1,Npz-1),dtype='float64') # Order R,L,U,D,F,B
+
+  # Face to Edge
+
+  LSQ_factors[0,0,1,:,:,:] = 0.25*(x1 + x3 + x5 + x7) - xG[0,0,0,:,:,:]
+  LSQ_factors[1,0,1,:,:,:] = 0.25*(x0 + x2 + x4 + x6) - xG[0,0,0,:,:,:]
+  LSQ_factors[2,0,1,:,:,:] = 0.25*(x2 + x3 + x6 + x7) - xG[0,0,0,:,:,:]
+  LSQ_factors[3,0,1,:,:,:] = 0.25*(x0 + x1 + x4 + x5) - xG[0,0,0,:,:,:]
+  LSQ_factors[4,0,1,:,:,:] = 0.25*(x4 + x5 + x6 + x7) - xG[0,0,0,:,:,:]
+  LSQ_factors[5,0,1,:,:,:] = 0.25*(x0 + x1 + x2 + x3) - xG[0,0,0,:,:,:]
+
+  LSQ_factors[0,1,1,:,:,:] = 0.25*(y1 + y3 + y5 + y7) - yG[0,0,0,:,:,:]
+  LSQ_factors[1,1,1,:,:,:] = 0.25*(y0 + y2 + y4 + y6) - yG[0,0,0,:,:,:]
+  LSQ_factors[2,1,1,:,:,:] = 0.25*(y2 + y3 + y6 + y7) - yG[0,0,0,:,:,:]
+  LSQ_factors[3,1,1,:,:,:] = 0.25*(y0 + y1 + y4 + y5) - yG[0,0,0,:,:,:]
+  LSQ_factors[4,1,1,:,:,:] = 0.25*(y4 + y5 + y6 + y7) - yG[0,0,0,:,:,:]
+  LSQ_factors[5,1,1,:,:,:] = 0.25*(y0 + y1 + y2 + y3) - yG[0,0,0,:,:,:]
+
+  LSQ_factors[0,2,1,:,:,:] = 0.25*(z1 + z3 + z5 + z7) - zG[0,0,0,:,:,:]
+  LSQ_factors[1,2,1,:,:,:] = 0.25*(z0 + z2 + z4 + z6) - zG[0,0,0,:,:,:]
+  LSQ_factors[2,2,1,:,:,:] = 0.25*(z2 + z3 + z6 + z7) - zG[0,0,0,:,:,:]
+  LSQ_factors[3,2,1,:,:,:] = 0.25*(z0 + z1 + z4 + z5) - zG[0,0,0,:,:,:]
+  LSQ_factors[4,2,1,:,:,:] = 0.25*(z4 + z5 + z6 + z7) - zG[0,0,0,:,:,:]
+  LSQ_factors[5,2,1,:,:,:] = 0.25*(z0 + z1 + z2 + z3) - zG[0,0,0,:,:,:]
+
+  # Face to Face
+
+  LSQ_factors[0,0,0,0:-1,:,:] = LSQ_factors[0,0,1,0:-1,:,:] - LSQ_factors[1,0,1,1:: ,:,:]
+  LSQ_factors[1,0,0,1:: ,:,:] = LSQ_factors[1,0,1,1:: ,:,:] - LSQ_factors[0,0,1,0:-1,:,:]
+  LSQ_factors[2,0,0,:,0:-1,:] = LSQ_factors[2,0,1,:,0:-1,:] - LSQ_factors[3,0,1,:,1:: ,:]
+  LSQ_factors[3,0,0,:,1:: ,:] = LSQ_factors[3,0,1,:,1:: ,:] - LSQ_factors[2,0,1,:,0:-1,:]
+  LSQ_factors[4,0,0,:,:,0:-1] = LSQ_factors[4,0,1,:,:,0:-1] - LSQ_factors[5,0,1,:,:,1:: ]
+  LSQ_factors[5,0,0,:,:,1:: ] = LSQ_factors[5,0,1,:,:,1:: ] - LSQ_factors[4,0,1,:,:,0:-1]
+  LSQ_factors[0,0,0,-1,:,:]   = LSQ_factors[0,0,1,-1,:,:]   - LSQ_factors[1,0,1,0 ,:,:]
+  LSQ_factors[1,0,0,0 ,:,:]   = LSQ_factors[1,0,1,0 ,:,:]   - LSQ_factors[0,0,1,-1,:,:]
+  LSQ_factors[2,0,0,:,-1,:]   = LSQ_factors[2,0,1,:,-1,:]   - LSQ_factors[3,0,1,:,0 ,:]
+  LSQ_factors[3,0,0,:,0 ,:]   = LSQ_factors[3,0,1,:,0 ,:]   - LSQ_factors[2,0,1,:,-1,:]
+  LSQ_factors[4,0,0,:,:,-1]   = LSQ_factors[4,0,1,:,:,-1]   - LSQ_factors[5,0,1,:,:,0 ]
+  LSQ_factors[5,0,0,:,:,0 ]   = LSQ_factors[5,0,1,:,:,0 ]   - LSQ_factors[4,0,1,:,:,-1]
+
+
+  LSQ_factors[0,1,0,0:-1,:,:] = LSQ_factors[0,1,1,0:-1,:,:] - LSQ_factors[1,1,1,1:: ,:,:]
+  LSQ_factors[1,1,0,1:: ,:,:] = LSQ_factors[1,1,1,1:: ,:,:] - LSQ_factors[0,1,1,0:-1,:,:]
+  LSQ_factors[2,1,0,:,0:-1,:] = LSQ_factors[2,1,1,:,0:-1,:] - LSQ_factors[3,1,1,:,1:: ,:]
+  LSQ_factors[3,1,0,:,1:: ,:] = LSQ_factors[3,1,1,:,1:: ,:] - LSQ_factors[2,1,1,:,0:-1,:]
+  LSQ_factors[4,1,0,:,:,0:-1] = LSQ_factors[4,1,1,:,:,0:-1] - LSQ_factors[5,1,1,:,:,1:: ]
+  LSQ_factors[5,1,0,:,:,1:: ] = LSQ_factors[5,1,1,:,:,1:: ] - LSQ_factors[4,1,1,:,:,0:-1]
+  LSQ_factors[0,1,0,-1,:,:]   = LSQ_factors[0,1,1,-1,:,:]   - LSQ_factors[1,1,1,0 ,:,:]
+  LSQ_factors[1,1,0,0 ,:,:]   = LSQ_factors[1,1,1,0 ,:,:]   - LSQ_factors[0,1,1,-1,:,:]
+  LSQ_factors[2,1,0,:,-1,:]   = LSQ_factors[2,1,1,:,-1,:]   - LSQ_factors[3,1,1,:,0 ,:]
+  LSQ_factors[3,1,0,:,0 ,:]   = LSQ_factors[3,1,1,:,0 ,:]   - LSQ_factors[2,1,1,:,-1,:]
+  LSQ_factors[4,1,0,:,:,-1]   = LSQ_factors[4,1,1,:,:,-1]   - LSQ_factors[5,1,1,:,:,0 ]
+  LSQ_factors[5,1,0,:,:,0 ]   = LSQ_factors[5,1,1,:,:,0 ]   - LSQ_factors[4,1,1,:,:,-1]
+
+
+  LSQ_factors[0,2,0,0:-1,:,:] = LSQ_factors[0,2,1,0:-1,:,:] - LSQ_factors[1,2,1,1:: ,:,:]
+  LSQ_factors[1,2,0,1:: ,:,:] = LSQ_factors[1,2,1,1:: ,:,:] - LSQ_factors[0,2,1,0:-1,:,:]
+  LSQ_factors[2,2,0,:,0:-1,:] = LSQ_factors[2,2,1,:,0:-1,:] - LSQ_factors[3,2,1,:,1:: ,:]
+  LSQ_factors[3,2,0,:,1:: ,:] = LSQ_factors[3,2,1,:,1:: ,:] - LSQ_factors[2,2,1,:,0:-1,:]
+  LSQ_factors[4,2,0,:,:,0:-1] = LSQ_factors[4,2,1,:,:,0:-1] - LSQ_factors[5,2,1,:,:,1:: ]
+  LSQ_factors[5,2,0,:,:,1:: ] = LSQ_factors[5,2,1,:,:,1:: ] - LSQ_factors[4,2,1,:,:,0:-1]
+  LSQ_factors[0,2,0,-1,:,:]   = LSQ_factors[0,2,1,-1,:,:]   - LSQ_factors[1,2,1,0 ,:,:]
+  LSQ_factors[1,2,0,0 ,:,:]   = LSQ_factors[1,2,1,0 ,:,:]   - LSQ_factors[0,2,1,-1,:,:]
+  LSQ_factors[2,2,0,:,-1,:]   = LSQ_factors[2,2,1,:,-1,:]   - LSQ_factors[3,2,1,:,0 ,:]
+  LSQ_factors[3,2,0,:,0 ,:]   = LSQ_factors[3,2,1,:,0 ,:]   - LSQ_factors[2,2,1,:,-1,:]
+  LSQ_factors[4,2,0,:,:,-1]   = LSQ_factors[4,2,1,:,:,-1]   - LSQ_factors[5,2,1,:,:,0 ]
+  LSQ_factors[5,2,0,:,:,0 ]   = LSQ_factors[5,2,1,:,:,0 ]   - LSQ_factors[4,2,1,:,:,-1]
+  
+  return xG[:,:,:,main.sx,main.sy,main.sz],yG[:,:,:,main.sx,main.sy,main.sz],zG[:,:,:,main.sx,main.sy,main.sz],LSQ_factors[:,:,:,main.sx,main.sy,main.sz]
 
 
 

@@ -1025,3 +1025,193 @@ def reconstructEdgeEdgesGeneral_entropy(main):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def reconstructEdgesGeneral_tensordot_linRecon(a,main):
+
+  du_r = np.zeros(main.a.u.shape,dtype='float64')  
+  du_l = np.zeros(main.a.u.shape,dtype='float64')  
+  du_u = np.zeros(main.a.u.shape,dtype='float64')  
+  du_d = np.zeros(main.a.u.shape,dtype='float64')  
+  du_f = np.zeros(main.a.u.shape,dtype='float64')  
+  du_b = np.zeros(main.a.u.shape,dtype='float64')
+
+  dx_r = main.LSQfactors[0,0,0,:,:,:]
+  dx_l = main.LSQfactors[1,0,0,:,:,:]
+  dx_u = main.LSQfactors[2,0,0,:,:,:]
+  dx_d = main.LSQfactors[3,0,0,:,:,:]
+  dx_f = main.LSQfactors[4,0,0,:,:,:]
+  dx_b = main.LSQfactors[5,0,0,:,:,:]
+
+  dy_r = main.LSQfactors[0,1,0,:,:,:]
+  dy_l = main.LSQfactors[1,1,0,:,:,:]
+  dy_u = main.LSQfactors[2,1,0,:,:,:]
+  dy_d = main.LSQfactors[3,1,0,:,:,:]
+  dy_f = main.LSQfactors[4,1,0,:,:,:]
+  dy_b = main.LSQfactors[5,1,0,:,:,:]
+
+  dz_r = main.LSQfactors[0,2,0,:,:,:]
+  dz_l = main.LSQfactors[1,2,0,:,:,:]
+  dz_u = main.LSQfactors[2,2,0,:,:,:]
+  dz_d = main.LSQfactors[3,2,0,:,:,:]
+  dz_f = main.LSQfactors[4,2,0,:,:,:]
+  dz_b = main.LSQfactors[5,2,0,:,:,:]
+
+  du_r[:,0,0,0,0,0:-1,:,:,:] = main.a.u[:,0,0,0,0,1:: ,:,:,:]-main.a.u[:,0,0,0,0,0:-1,:,:,:]
+  du_l[:,0,0,0,0,1:: ,:,:,:] = main.a.u[:,0,0,0,0,0:-1,:,:,:]-main.a.u[:,0,0,0,0,1:: ,:,:,:]
+  du_u[:,0,0,0,0,:,0:-1,:,:] = main.a.u[:,0,0,0,0,:,1:: ,:,:]-main.a.u[:,0,0,0,0,:,0:-1,:,:]
+  du_d[:,0,0,0,0,:,1:: ,:,:] = main.a.u[:,0,0,0,0,:,0:-1,:,:]-main.a.u[:,0,0,0,0,:,1:: ,:,:]
+  du_f[:,0,0,0,0,:,:,0:-1,:] = main.a.u[:,0,0,0,0,:,:,1:: ,:]-main.a.u[:,0,0,0,0,:,:,0:-1,:]
+  du_b[:,0,0,0,0,:,:,1:: ,:] = main.a.u[:,0,0,0,0,:,:,0:-1,:]-main.a.u[:,0,0,0,0,:,:,1:: ,:]
+  
+  if (main.BC_rank[1]==True):
+    du_r[:,0,0,0,0,-1,:,:,:] = main.a.uR_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,-1,:,:,:]
+  else:
+    du_r[:,0,0,0,0,-1,:,:,:] = main.a.uR_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,-1,:,:,:]
+    dx_r[-1,:,:]   = main.LSQfactors[0,0,1,-1,:,:]
+    dy_r[-1,:,:]   = main.LSQfactors[0,1,1,-1,:,:]
+    dz_r[-1,:,:]   = main.LSQfactors[0,2,1,-1,:,:]
+  
+  if (main.BC_rank[0]==True):
+    du_l[:,0,0,0,0,0 ,:,:,:] = main.a.uL_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,0,:,:,:]
+  else:
+    du_l[:,0,0,0,0,0 ,:,:,:] = main.a.uL_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,0,:,:,:]
+    dx_l[0,:,:]   = main.LSQfactors[1,0,1,0,:,:]
+    dy_l[0,:,:]   = main.LSQfactors[1,1,1,0,:,:]
+    dz_l[0,:,:]   = main.LSQfactors[1,2,1,0,:,:]
+  
+  if (main.BC_rank[3]==True):
+    du_u[:,0,0,0,0,:,-1,:,:] = main.a.uU_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,:,-1,:,:]
+  else:
+    du_u[:,0,0,0,0,:,-1,:,:] = main.a.uU_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,:,-1,:,:]
+    dx_u[:,-1,:]   = main.LSQfactors[2,0,1,:,-1,:]
+    dy_u[:,-1,:]   = main.LSQfactors[2,1,1,:,-1,:]
+    dz_u[:,-1,:]   = main.LSQfactors[2,2,1,:,-1,:]
+  
+  if (main.BC_rank[2]==True):
+    du_d[:,0,0,0,0,:,0,:,:] = main.a.uD_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,:,0,:,:]
+  else:
+    du_d[:,0,0,0,0,:,0,:,:] = main.a.uD_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,:,0,:,:]
+    dx_d[:,0,:]   = main.LSQfactors[3,0,1,:,0,:]
+    dy_d[:,0,:]   = main.LSQfactors[3,1,1,:,0,:]
+    dz_d[:,0,:]   = main.LSQfactors[3,2,1,:,0,:]
+  
+  if (main.BC_rank[5]==True):
+    du_f[:,0,0,0,0,:,:,-1,:] = main.a.uF_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,:,:,-1,:]
+  else:
+    du_f[:,0,0,0,0,:,:,-1,:] = main.a.uF_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,:,:,-1,:]
+    dx_f[:,:,-1]   = main.LSQfactors[4,0,1,:,:,-1]
+    dy_f[:,:,-1]   = main.LSQfactors[4,1,1,:,:,-1]
+    dz_f[:,:,-1]   = main.LSQfactors[4,2,1,:,:,-1]
+  
+  if (main.BC_rank[4]==True):
+    du_b[:,0,0,0,0,:,:,0,:]  = main.a.uB_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,:,:,0,:]
+  else:
+    du_b[:,0,0,0,0,:,:,0,:]  = main.a.uB_edge[:,0,0,0,:,:,:]-main.a.u[:,0,0,0,0,:,:,0,:]
+    dx_b[:,:,0]   = main.LSQfactors[5,0,1,:,:,0]
+    dy_b[:,:,0]   = main.LSQfactors[5,1,1,:,:,0]
+    dz_b[:,:,0]   = main.LSQfactors[5,2,1,:,:,0]
+  
+  dx_r = dx_r[None,None,None,None,None,:,:,:,None]
+  dx_l = dx_l[None,None,None,None,None,:,:,:,None]
+  dx_u = dx_u[None,None,None,None,None,:,:,:,None]
+  dx_d = dx_d[None,None,None,None,None,:,:,:,None]
+  dx_f = dx_f[None,None,None,None,None,:,:,:,None]
+  dx_b = dx_b[None,None,None,None,None,:,:,:,None]
+  dy_r = dy_r[None,None,None,None,None,:,:,:,None]
+  dy_l = dy_l[None,None,None,None,None,:,:,:,None]
+  dy_u = dy_u[None,None,None,None,None,:,:,:,None]
+  dy_d = dy_d[None,None,None,None,None,:,:,:,None]
+  dy_f = dy_f[None,None,None,None,None,:,:,:,None]
+  dy_b = dy_b[None,None,None,None,None,:,:,:,None]
+  dz_r = dz_r[None,None,None,None,None,:,:,:,None]
+  dz_l = dz_l[None,None,None,None,None,:,:,:,None]
+  dz_u = dz_u[None,None,None,None,None,:,:,:,None]
+  dz_d = dz_d[None,None,None,None,None,:,:,:,None]
+  dz_f = dz_f[None,None,None,None,None,:,:,:,None]
+  dz_b = dz_b[None,None,None,None,None,:,:,:,None]
+
+  dx_m = (dx_r**2 + dx_l**2 + dx_u**2 + dx_d**2 + dx_f**2 + dx_b**2)
+  dy_m = (dy_r**2 + dy_l**2 + dy_u**2 + dy_d**2 + dy_f**2 + dy_b**2)
+  dz_m = (dz_r**2 + dz_l**2 + dz_u**2 + dz_d**2 + dz_f**2 + dz_b**2)
+
+  dudx = (du_r*dx_r + du_l*dx_l + du_u*dx_u + du_d*dx_d + du_f*dx_f + du_b*dx_b)/dx_m
+  dudy = (du_r*dy_r + du_l*dy_l + du_u*dy_u + du_d*dy_d + du_f*dy_f + du_b*dy_b)/dy_m
+  dudz = (du_r*dz_r + du_l*dz_l + du_u*dz_u + du_d*dz_d + du_f*dz_f + du_b*dz_b)/dz_m
+
+  # Reconstruct
+  
+  xR = main.LSQfactors[0,0,1,:,:,:]
+  yR = main.LSQfactors[0,1,1,:,:,:]
+  zR = main.LSQfactors[0,2,1,:,:,:]
+  
+  main.a.uR[:,0,0,0,:,:,:,0] = main.a.u[:,0,0,0,0,:,:,:,0]
+  main.a.uR[:,0,0,0,:,:,:,0] += dudx[:,0,0,0,0,:,:,:,0]*xR[None,:,:,:]
+  main.a.uR[:,0,0,0,:,:,:,0] += dudy[:,0,0,0,0,:,:,:,0]*yR[None,:,:,:]
+  main.a.uR[:,0,0,0,:,:,:,0] += dudz[:,0,0,0,0,:,:,:,0]*zR[None,:,:,:]
+
+  xL = main.LSQfactors[1,0,1,:,:,:]
+  yL = main.LSQfactors[1,1,1,:,:,:]
+  zL = main.LSQfactors[1,2,1,:,:,:]
+  
+  main.a.uL[:,0,0,0,:,:,:,0] = main.a.u[:,0,0,0,0,:,:,:,0]
+  main.a.uL[:,0,0,0,:,:,:,0] += dudx[:,0,0,0,0,:,:,:,0]*xL[None,:,:,:]
+  main.a.uL[:,0,0,0,:,:,:,0] += dudy[:,0,0,0,0,:,:,:,0]*yL[None,:,:,:]
+  main.a.uL[:,0,0,0,:,:,:,0] += dudz[:,0,0,0,0,:,:,:,0]*zL[None,:,:,:]
+  
+  xU = main.LSQfactors[2,0,1,:,:,:]
+  yU = main.LSQfactors[2,1,1,:,:,:]
+  zU = main.LSQfactors[2,2,1,:,:,:]
+  
+  main.a.uU[:,0,0,0,:,:,:,0] = main.a.u[:,0,0,0,0,:,:,:,0]
+  main.a.uU[:,0,0,0,:,:,:,0] += dudx[:,0,0,0,0,:,:,:,0]*xU[None,:,:,:]
+  main.a.uU[:,0,0,0,:,:,:,0] += dudy[:,0,0,0,0,:,:,:,0]*yU[None,:,:,:]
+  main.a.uU[:,0,0,0,:,:,:,0] += dudz[:,0,0,0,0,:,:,:,0]*zU[None,:,:,:]
+  
+  xD = main.LSQfactors[3,0,1,:,:,:]
+  yD = main.LSQfactors[3,1,1,:,:,:]
+  zD = main.LSQfactors[3,2,1,:,:,:]
+  
+  main.a.uD[:,0,0,0,:,:,:,0] = main.a.u[:,0,0,0,0,:,:,:,0]
+  main.a.uD[:,0,0,0,:,:,:,0] += dudx[:,0,0,0,0,:,:,:,0]*xD[None,:,:,:]
+  main.a.uD[:,0,0,0,:,:,:,0] += dudy[:,0,0,0,0,:,:,:,0]*yD[None,:,:,:]
+  main.a.uD[:,0,0,0,:,:,:,0] += dudz[:,0,0,0,0,:,:,:,0]*zD[None,:,:,:]
+  
+  xF = main.LSQfactors[4,0,1,:,:,:]
+  yF = main.LSQfactors[4,1,1,:,:,:]
+  zF = main.LSQfactors[4,2,1,:,:,:]
+  
+  main.a.uF[:,0,0,0,:,:,:,0] = main.a.u[:,0,0,0,0,:,:,:,0]
+  main.a.uF[:,0,0,0,:,:,:,0] += dudx[:,0,0,0,0,:,:,:,0]*xF[None,:,:,:]
+  main.a.uF[:,0,0,0,:,:,:,0] += dudy[:,0,0,0,0,:,:,:,0]*yF[None,:,:,:]
+  main.a.uF[:,0,0,0,:,:,:,0] += dudz[:,0,0,0,0,:,:,:,0]*zF[None,:,:,:]
+  
+  xB = main.LSQfactors[5,0,1,:,:,:]
+  yB = main.LSQfactors[5,1,1,:,:,:]
+  zB = main.LSQfactors[5,2,1,:,:,:]
+  
+  main.a.uB[:,0,0,0,:,:,:,0] = main.a.u[:,0,0,0,0,:,:,:,0]
+  main.a.uB[:,0,0,0,:,:,:,0] += dudx[:,0,0,0,0,:,:,:,0]*xB[None,:,:,:]
+  main.a.uB[:,0,0,0,:,:,:,0] += dudy[:,0,0,0,0,:,:,:,0]*yB[None,:,:,:]
+  main.a.uB[:,0,0,0,:,:,:,0] += dudz[:,0,0,0,0,:,:,:,0]*zB[None,:,:,:]
+  
+  #return uR,uL,uU,uD,uF,uB

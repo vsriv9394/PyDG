@@ -275,7 +275,7 @@ class variables:
     Xtmp[0],Xtmp[1],Xtmp[2] = x,y,z
     X_el = get_Xel(Xtmp,self.sx,self.sy,self.sz)
     self.J,self.Jinv,self.Jdet,self.J_edge_det,self.normals = computeJacobian(X_el,self.zeta0,self.zeta1,self.zeta2)
-    self.xG,self.yG,self.zG = getGlobGrid(self,x,y,z,self.zeta0,self.zeta1,self.zeta2)
+    self.xG,self.yG,self.zG,self.LSQfactors = getGlobGrid(self,x,y,z,self.zeta0,self.zeta1,self.zeta2)
     self.Minv = getMassMatrix(self)
     self.gas = gasClass() 
     self.Cv = self.gas.Cv

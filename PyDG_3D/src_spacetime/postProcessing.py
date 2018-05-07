@@ -37,11 +37,11 @@ class postProcessorScalar:
 
 
 class postProcessor:
-  def __init__(self):
-    def writeAllToParaview(self,start=0,end=100000,skip=1):
+  def __init__(self,st,sk,en):
+    def writeAllToParaview(self,start=st,end=en,skip=sk):
       grid = np.load('../DGgrid.npz')
       x,y,z = grid['x'],grid['y'],grid['z']
-      for i in range(0,end,skip):
+      for i in range(start,end,skip):
         sol_str = 'npsol' + str(i) + '.npz'
         if (os.path.isfile(sol_str)):
           print('found ' + sol_str)
@@ -70,6 +70,9 @@ class postProcessor_subscale:
 
 
 eqn_type = sys.argv[1:][:]
+st       = int(sys.argv[2])
+sk       = int(sys.argv[3])
+en       = int(sys.argv[4])
 check = 0
 if (eqn_type[0] == 'Entropy'):
   print('Post Processing for Entropy Variables')
@@ -81,7 +84,7 @@ if (eqn_type[0] == 'Scalar'):
   check = 1
 if (eqn_type[0] == 'Navier-Stokes'):
   print('Post Processing for Navier-Stokes Equations')
-  postProcess = postProcessor()
+  postProcess = postProcessor(st,sk,en)
   check = 1
 if (eqn_type[0] == 'PLQLu'):
   print('Post Processing for PLQLu subscales')
