@@ -264,7 +264,7 @@ def sendEdgesGeneralSlab(fL,fR,fD,fU,fB,fF,main,regionManager):
 
     #============================
 
-    if (main.rank_connect[5] != main.mpi_rank and ((main.frontBC.args[1] == 0 and (main.frontBC.BC_type == 'periodic' or main.frontBC.BC_type == 'patch') and front_Face==True) or front_face==False)):
+    if (main.rank_connect[5] != main.mpi_rank and ((main.frontBC.args[1] == 0 and (main.frontBC.BC_type == 'periodic' or main.frontBC.BC_type == 'patch') and front_face==True) or front_face==False)):
       nFB-=1
       tmp = np.zeros(np.size(fB[:,:,:,:,:,:,0]))
       main.comm.Recv(tmp,source=main.rank_connect[5],tag=main.rank_connect[5]+4*main.num_processes_global)
