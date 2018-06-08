@@ -157,17 +157,17 @@ def sendEdgesGeneralSlab(fL,fR,fD,fU,fB,fF,main,regionManager):
     
     if (main.topBC.BC_type == 'patch'):
         if (main.topBC.args[1] ==  0):
-            uU[:] = regionManager.region[main.topBC.args[0]].a.uD[:,:,:,:, 0,:,:]
+            uU[:] = regionManager.region[main.topBC.args[0]].a.uD[:,:,:,:,:, 0,:,:]
         if (main.topBC.args[1] == -1):
-            uU[:] = regionManager.region[main.topBC.args[0]].a.uU[:,:,:,:,-1,:,:]
+            uU[:] = regionManager.region[main.topBC.args[0]].a.uU[:,:,:,:,:,-1,:,:]
     
     uU[:] = main.topBC.applyBC(fU[:,:,:,:,:,-1,:],uU,main.topBC.args,main)
     
     if (main.bottomBC.BC_type == 'patch'):
         if (main.bottomBC.args[1] == -1):
-            uD[:] = regionManager.region[main.bottomBC.args[0]].a.uU[:,:,:,:,-1,:,:]
+            uD[:] = regionManager.region[main.bottomBC.args[0]].a.uU[:,:,:,:,:,-1,:,:]
         if (main.bottomBC.args[1] ==  0):
-            uD[:] = regionManager.region[main.bottomBC.args[0]].a.uD[:,:,:,:, 0,:,:]
+            uD[:] = regionManager.region[main.bottomBC.args[0]].a.uD[:,:,:,:,:, 0,:,:]
     
     uD[:] = main.bottomBC.applyBC(fD[:,:,:,:,:,0,:],uD,main.bottomBC.args,main)
 
@@ -446,16 +446,16 @@ def sendEdgesGeneralSlab_Derivs(fL,fR,fD,fU,fB,fF,main,regionManager):
 
     if (main.topBC.BC_type == 'patch'):
         if (main.topBC.args[1] ==  0):
-            uU[:] = regionManager.region[main.topBC.args[0]].a.uD[:,:,:,:, 0,:,:]
+            uU[:] = regionManager.region[main.topBC.args[0]].a.uD[:,:,:,:,:, 0,:]
         if (main.topBC.args[1] == -1):
-            uU[:] = regionManager.region[main.topBC.args[0]].a.uU[:,:,:,:,-1,:,:]
+            uU[:] = regionManager.region[main.topBC.args[0]].a.uU[:,:,:,:,:,-1,:]
         uU[:] = main.topBC.applyBC(fU[:,:,:,:,:,-1,:],uU,main.topBC.args,main)
     
     if (main.bottomBC.BC_type == 'patch'):
         if (main.bottomBC.args[1] == -1):
-            uD[:] = regionManager.region[main.bottomBC.args[0]].a.uU[:,:,:,:,-1,:,:]
+            uD[:] = regionManager.region[main.bottomBC.args[0]].a.uU[:,:,:,:,:,-1,:]
         if (main.bottomBC.args[1] ==  0):
-            uD[:] = regionManager.region[main.bottomBC.args[0]].a.uD[:,:,:,:, 0,:,:]
+            uD[:] = regionManager.region[main.bottomBC.args[0]].a.uD[:,:,:,:,:, 0,:]
         uD[:] = main.bottomBC.applyBC(fD[:,:,:,:,:,0,:],uD,main.bottomBC.args,main)
 
   else:
