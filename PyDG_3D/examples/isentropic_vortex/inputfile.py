@@ -37,15 +37,16 @@ x = np.linspace(0,L,Nel[0]+1)      #|  x, y, and z
 y = np.linspace(0,L,Nel[1]+1)      #|
 z = np.linspace(0,L,Nel[2]+1)      #|
 x,y,z = np.meshgrid(x,y,z,indexing='ij')
+
 t = 0                              #|  simulation start time
 dt = 0.025
 et = 10.                           #|  simulation end time
 save_freq = 10.                      #|  frequency to save output and print to screen
 eqn_str = 'Navier-Stokes'          #|  equation set
 schemes = ('roe','BR1')             #|  inviscid and viscous flux schemes
-procx = 1                         #|  processor decomposition in x
-procy = 1                          #|  same in y. Note that procx*procy needs to equal total number of procs
-procz = 1
+procx = 2                         #|  processor decomposition in x
+procy = 2                          #|  same in y. Note that procx*procy needs to equal total number of procs
+procz = 2
 
 right_bc = 'periodic'
 left_bc = 'periodic'

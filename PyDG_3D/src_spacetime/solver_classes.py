@@ -146,7 +146,6 @@ class timeschemes:
       self.sparse_quadrature = True
       self.args = [self.nonlinear_solver,self.linear_solver,self.sparse_quadrature]
 
-
     if (time_str == 'SDIRK2'):
       check_t = 0
       self.advanceSol = SDIRK2 
@@ -154,9 +153,18 @@ class timeschemes:
       self.nonlinear_solver = nonlinearSolver(nlsolver_str)
       self.sparse_quadrature = True 
       self.args = [self.nonlinear_solver,self.linear_solver,self.sparse_quadrature]
+
     if (time_str == 'SDIRK4'):
       check_t = 0
       self.advanceSol = SDIRK4 
+      self.linear_solver = linearSolver(lsolver_str)
+      self.nonlinear_solver = nonlinearSolver(nlsolver_str)
+      self.sparse_quadrature = False 
+      self.args = [self.nonlinear_solver,self.linear_solver,self.sparse_quadrature]
+
+    if (time_str == 'SDIRK3'):
+      check_t = 0
+      self.advanceSol = SDIRK3 
       self.linear_solver = linearSolver(lsolver_str)
       self.nonlinear_solver = nonlinearSolver(nlsolver_str)
       self.sparse_quadrature = False 

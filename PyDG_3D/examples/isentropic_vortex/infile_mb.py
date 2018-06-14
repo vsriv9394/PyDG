@@ -67,13 +67,13 @@ y_block = [y_block0,y_block1,y_block2,y_block3]
 z_block = [z_block0,z_block1,z_block2,z_block3]
 
 t = 0                              #|  simulation start time
-dt = 0.025                       #|  simulation time step
+dt = 0.05                       #|  simulation time step
 et = 10.                           #|  simulation end time
 save_freq = 5                      #|  frequency to save output and print to screen
 eqn_str = 'Navier-Stokes'          #|  equation set
 schemes = ('roe','Inviscid')             #|  inviscid and viscous flux schemes
 basis_functions_str = 'TensorDot'
-orthogonal_str = True
+#orthogonal_str = True
 
 #=========== MPI information ==========
 procx_block0 = 1
@@ -93,9 +93,9 @@ procy_block3 = 1
 procz_block3 = 1
 
 starting_rank0 = 0
-starting_rank1 = 0
-starting_rank2 = 0 
-starting_rank3 = 0
+starting_rank1 = 1
+starting_rank2 = 2 
+starting_rank3 = 3
 
 procx = [procx_block0,procx_block1,procx_block2,procx_block3]
 procy = [procy_block0,procy_block1,procy_block2,procy_block3]
@@ -168,7 +168,7 @@ source_mag = False
 #turb_str = 'orthogonal subscale'
 #time_integration = 'SpaceTime'   #| 
 #time_integration = 'CrankNicolson'   #| 
-time_integration = 'SSP_RK3'
+time_integration = 'SDIRK3'
 linear_solver_str = 'GMRes'
 nonlinear_solver_str = 'Newton'
 

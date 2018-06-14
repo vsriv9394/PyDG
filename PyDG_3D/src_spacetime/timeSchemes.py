@@ -995,145 +995,7 @@ def StrangSplitting(main,MZ,eqns,args):
   main.iteration += 1
 
 
-def SDIRK2(main,MZ,eqns,args):
-  nonlinear_solver = args[0]
-  linear_solver = args[1]
-  sparse_quadrature = args[2]
-  main.a0[:] = main.a.a[:]
-  main.getRHS(main,MZ,eqns)
-  R0 = np.zeros(np.shape(main.RHS))
-  R0[:] = main.RHS[:]
-  alpha = (2. - np.sqrt(2.))/2.
-  
-  def STAGE1_unsteadyResidual(v):
-    main.a.a[:] = np.reshape(v,np.shape(main.a.a))
-    main.getRHS(main,MZ,eqns)
-    R1 = np.zeros(np.shape(main.RHS))
-    R1[:] = main.RHS[:]
-    Rstar = ( main.a.a[:] - main.a0 ) - alpha*main.dt*R1
-    Rstar_glob = gatherResid(Rstar,main)
-    return Rstar,R1,Rstar_glob
 
-  def create_MF_Jacobian(v,args,main):
-    an = args[0]
-    Rn = args[1]
-    vr = np.reshape(v,np.shape(main.a.a))
-    eps = 5.e-2
-    main.a.a[:] = an[:] + eps*vr
-    main.getRHS(main,MZ,eqns)
-    R1 = np.zeros(np.shape(main.RHS))
-    R1[:] = main.RHS[:]
-    Av = vr - main.dt*alpha*(R1 - Rn)/eps
-    return Av.flatten()
-  #stage 1
-  nonlinear_solver.solve(STAGE1_unsteadyResidual, create_MF_Jacobian,main,linear_solver,sparse_quadrature,eqns)
-  main.getRHS(main,MZ,eqns)
-  R0[:] = main.RHS[:]
-  main.a0[:] = main.a.a[:]
-  def STAGE2_unsteadyResidual(v):
-    main.a.a[:] = np.reshape(v,np.shape(main.a.a))
-    main.getRHS(main,MZ,eqns)
-    R1 = np.zeros(np.shape(main.RHS))
-    R1[:] = main.RHS[:]
-    Rstar = ( main.a.a[:] - main.a0 ) - main.dt*( (1. - alpha)*R0 + alpha*R1 )
-    Rstar_glob = gatherResid(Rstar,main)
-    return Rstar,R1,Rstar_glob
-
-  nonlinear_solver.solve(STAGE2_unsteadyResidual, create_MF_Jacobian,main,linear_solver,sparse_quadrature,eqns)
-  main.t += main.dt
-  main.iteration += 1
-
-
-def SDIRK4(main,MZ,eqns,args):
-  nonlinear_solver = args[0]
-  linear_solver = args[1]
-  sparse_quadrature = args[2]
-  main.a0[:] = main.a.a[:]
-  main.getRHS(main,MZ,eqns)
-  R0 = np.zeros(np.shape(main.RHS))
-  R0[:] = main.RHS[:]
-  gam = 9./40.
-  c2 = 7./13.
-  c3 = 11./15.
-  b2 = -(-2. + 3.*c3 + 9.*gam - 12.*c3*gam - 6.*gam**2 + 6.*c3*gam**2)/(6.*(c2 - c3)*(c2 - gam))
-  b3 =  (-2. + 3.*c2 + 9.*gam - 12.*c2*gam - 6.*gam**2 + 6.*c2*gam**2)/(6.*(c2 - c3)*(c3 - gam))
-  a32 = -(c2 - c3)*(c3 - gam)*(-1. + 9.*gam - 18.*gam**2 + 6.*gam**3)/ \
-       ( (c2 - gam)*(-2. + 3.*c2 + 9.*gam - 12.*c2*gam - 6.*gam**2 + 6.*c2*gam**2) )
-
-  def create_MF_Jacobian(v,args,main):
-    an = args[0]
-    Rn = args[1]
-    vr = np.reshape(v,np.shape(main.a.a))
-    eps = 5.e-2
-    main.a.a[:] = an[:] + eps*vr
-    main.getRHS(main,MZ,eqns)
-    R1 = np.zeros(np.shape(main.RHS))
-    R1[:] = main.RHS[:]
-    Av = vr - main.dt*gam*(R1 - Rn)/eps
-    return Av.flatten()
-
-
-  #========== STAGE 1 ======================
-
-  def STAGE1_unsteadyResidual(v):
-    main.a.a[:] = np.reshape(v,np.shape(main.a.a))
-    main.getRHS(main,MZ,eqns)
-    R1 = np.zeros(np.shape(main.RHS))
-    R1[:] = main.RHS[:]
-    Rstar = ( main.a.a[:] - main.a0 ) - gam*main.dt*R1
-    Rstar_glob = gatherResid(Rstar,main)
-    return Rstar,R1,Rstar_glob
-
-  nonlinear_solver.solve(STAGE1_unsteadyResidual, create_MF_Jacobian,main,linear_solver,sparse_quadrature,eqns)
-  main.getRHS(main,MZ,eqns)
-  R1 = np.zeros( np.shape(main.RHS) )
-  R1[:] = main.RHS[:]
-  main.a0[:] = main.a.a[:]
-
-  #========= STAGE 2 ==========================
-  def STAGE2_unsteadyResidual(v):
-    main.a.a[:] = np.reshape(v,np.shape(main.a.a))
-    main.getRHS(main,MZ,eqns)
-    R2 = np.zeros(np.shape(main.RHS))
-    R2[:] = main.RHS[:]
-    Rstar = ( main.a.a[:] - main.a0 ) - main.dt*( (c2 - gam)*R1 + gam*R2 )
-    Rstar_glob = gatherResid(Rstar,main)
-    return Rstar,R2,Rstar_glob
-
-  nonlinear_solver.solve(STAGE2_unsteadyResidual, create_MF_Jacobian,main,linear_solver,sparse_quadrature,eqns)
-  main.getRHS(main,MZ,eqns)
-  R2 = np.zeros( np.shape(main.RHS) )
-  R2[:] = main.RHS[:]
-  main.a0[:] = main.a.a[:]
-
-  #============ STAGE 3 ===============
-  def STAGE3_unsteadyResidual(v):
-    main.a.a[:] = np.reshape(v,np.shape(main.a.a))
-    main.getRHS(main,MZ,eqns)
-    R3 = np.zeros(np.shape(main.RHS))
-    R3[:] = main.RHS[:]
-    Rstar = ( main.a.a[:] - main.a0 ) - main.dt*( (c3 - a32 -  gam)*R1 + a32*R2 + gam*R3 )
-    Rstar_glob = gatherResid(Rstar,main)
-    return Rstar,R3,Rstar_glob
-
-  nonlinear_solver.solve(STAGE3_unsteadyResidual, create_MF_Jacobian,main,linear_solver,sparse_quadrature,eqns)
-  main.getRHS(main,MZ,eqns)
-  R3 = np.zeros( np.shape(main.RHS) )
-  R3[:] = main.RHS[:]
-  main.a0[:] = main.a.a[:]
-
-  #============ STAGE 4 ============
-  def STAGE4_unsteadyResidual(v):
-    main.a.a[:] = np.reshape(v,np.shape(main.a.a))
-    main.getRHS(main,MZ,eqns)
-    R4 = np.zeros(np.shape(main.RHS))
-    R4[:] = main.RHS[:]
-    Rstar = ( main.a.a[:] - main.a0 ) - main.dt*( (1. - b2 - b3 - gam)*R1 + b2*R2 + b3*R3 + gam*R4 )
-    Rstar_glob = gatherResid(Rstar,main)
-    return Rstar,R4,Rstar_glob
-  nonlinear_solver.solve(STAGE4_unsteadyResidual,create_MF_Jacobian,main,linear_solver,sparse_quadrature,eqns)
-  main.t += main.dt
-  main.iteration += 1
 
 
 ### This is for PETSc. It's not MPI so don't use - just have it for comparrison
@@ -1201,3 +1063,271 @@ def advanceSolImplicit_PETsc(main,MZ,eqns):
   main.t += main.dt
   main.iteration += 1
 
+
+
+
+
+
+
+
+
+def BackwardEuler(regionManager,eqns,args):
+
+  nonlinear_solver = args[0]
+  linear_solver = args[1]
+  sparse_quadrature = args[2]
+  
+  regionManager.a0[:] = regionManager.a[:]
+
+  regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+  
+  R0    = np.zeros(np.shape(regionManager.RHS))
+  R0[:] = regionManager.RHS[:]
+
+  #===================================================================
+  
+  def unsteadyResidual(regionManager,v):
+    
+    regionManager.a[:] = v[:] 
+    regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+    
+    RHS_CN = np.zeros(np.size(regionManager.RHS))
+    
+    R1    = np.zeros(np.size(regionManager.RHS))
+    R1[:] = regionManager.RHS[:]
+    
+    RHS_CN[:]  = regionManager.dt*(R1)
+    
+    Rstar      = ( regionManager.a[:] - regionManager.a0 ) - RHS_CN 
+    Rstar_glob = gatherResid(Rstar,regionManager)
+    return Rstar,R1,Rstar_glob
+
+  #===================================================================
+  ## Function to a Matrix free approximation to the mat-vec product [dR/du][v] 
+  
+  def create_MF_Jacobian(v,args,regionManager):
+    
+    an = args[0]
+    Rn = args[1]
+    
+    vr = np.reshape(v,np.shape(regionManager.a))
+    eps = 5.e-7
+    
+    regionManager.a[:] = an + eps*vr
+    regionManager.getRHS_REGION_OUTER(regionManager,eqns) #includes loop over all regions
+    
+    RHS_CN    = np.zeros(np.shape(regionManager.RHS))
+    RHS_CN[:] = 0.5*regionManager.dt*(regionManager.RHS - Rn)/eps
+    Av        = vr - RHS_CN
+    return Av
+
+  nonlinear_solver.solve(unsteadyResidual, create_MF_Jacobian,regionManager,linear_solver,sparse_quadrature,eqns,None)
+
+  regionManager.t += regionManager.dt
+  regionManager.iteration += 1
+
+
+
+
+
+
+
+
+
+
+
+
+def SDIRK2(regionManager,eqns,args):
+  nonlinear_solver = args[0]
+  linear_solver = args[1]
+  sparse_quadrature = args[2]
+  
+  regionManager.a0[:] = regionManager.a[:]
+  
+  regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+  
+  R0 = np.zeros(np.shape(regionManager.RHS))
+  R0[:] = regionManager.RHS[:]
+  alpha = (2. - np.sqrt(2.))/2.
+  
+  #============================================================================================================
+  def STAGE1_unsteadyResidual(regionManager, v):
+    
+    regionManager.a[:] = v[:]
+
+    regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+    
+    RHS_CN = np.zeros(np.size(regionManager.RHS))
+    
+    R1    = np.zeros(np.size(regionManager.RHS))
+    R1[:] = regionManager.RHS[:]
+    
+    RHS_CN[:]  = alpha*regionManager.dt*R1
+    
+    Rstar      = ( regionManager.a[:] - regionManager.a0 ) - RHS_CN 
+    Rstar_glob = gatherResid(Rstar,regionManager)
+    return Rstar,R1,Rstar_glob
+  
+  #============================================================================================================
+  def create_MF_Jacobian(v,args,regionManager):
+    
+    an = args[0]
+    Rn = args[1]
+    
+    vr = np.reshape(v,np.shape(regionManager.a))
+    eps = 5.e-7
+    
+    regionManager.a[:] = an + eps*vr
+    regionManager.getRHS_REGION_OUTER(regionManager,eqns) #includes loop over all regions
+    
+    RHS_CN    = np.zeros(np.shape(regionManager.RHS))
+    RHS_CN[:] = alpha*regionManager.dt*(regionManager.RHS - Rn)/eps
+    Av        = vr - RHS_CN
+    return Av
+  #============================================================================================================
+  
+  #stage 1
+  nonlinear_solver.solve(STAGE1_unsteadyResidual, create_MF_Jacobian,regionManager,linear_solver,sparse_quadrature,eqns,None)
+  
+  regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+  R0[:] = regionManager.RHS[:]
+  regionManager.a0[:] = regionManager.a[:]
+
+  #============================================================================================================
+  def STAGE2_unsteadyResidual(regionManager, v):
+
+    regionManager.a[:] = v[:]
+
+    regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+    
+    RHS_CN = np.zeros(np.size(regionManager.RHS))
+    
+    R1    = np.zeros(np.size(regionManager.RHS))
+    R1[:] = regionManager.RHS[:]
+    
+    RHS_CN[:]  = regionManager.dt*((1.-alpha)*R0+alpha*R1)
+    
+    Rstar      = ( regionManager.a[:] - regionManager.a0 ) - RHS_CN 
+    Rstar_glob = gatherResid(Rstar,regionManager)
+    return Rstar,R1,Rstar_glob
+
+  nonlinear_solver.solve(STAGE2_unsteadyResidual, create_MF_Jacobian,regionManager,linear_solver,sparse_quadrature,eqns,None)
+  regionManager.t += regionManager.dt
+  regionManager.iteration += 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def SDIRK3(regionManager,eqns,args):
+
+  nonlinear_solver = args[0]
+  linear_solver = args[1]
+  sparse_quadrature = args[2]
+
+  regionManager.a0[:] = regionManager.a[:]
+  regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+
+  R0 = np.zeros(np.shape(regionManager.RHS))
+  R0[:] = regionManager.RHS[:]
+
+  gam = 0.435866521508459
+
+#  c1  = gam
+#  c2  = 0.7179332607542295
+#  c3  = 1.
+
+  a11 = gam
+  a21 = 0.2820667392457705
+  a22 = gam
+  a31 = 1.20849664917601
+  a32 =-0.6443631706844692
+  a33 = gam
+
+  #=========================================
+  def create_MF_Jacobian(v,args,regionManager):
+    
+    an  = args[0]
+    Rn  = args[1]
+    vr  = np.reshape(v,np.shape(regionManager.a))
+    eps = 5.e-6
+
+    regionManager.a[:] = an[:] + eps*vr
+    regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+    
+    R1 = np.zeros(np.shape(regionManager.RHS))
+    R1[:] = regionManager.RHS[:]
+
+    Av = vr - regionManager.dt*gam*(R1 - Rn)/eps
+    return Av.flatten()
+
+
+
+
+  #========== STAGE 1 ======================
+
+  def STAGE1_unsteadyResidual(regionManager, v):
+
+    regionManager.a[:] = v[:]
+    regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+    R1 = np.zeros(np.shape(regionManager.RHS))
+    R1[:] = regionManager.RHS[:]
+    Rstar = ( regionManager.a[:] - regionManager.a0 ) - gam*regionManager.dt*R1
+    Rstar_glob = gatherResid(Rstar,regionManager)
+    return Rstar,R1,Rstar_glob
+
+  nonlinear_solver.solve(STAGE1_unsteadyResidual,create_MF_Jacobian,regionManager,linear_solver,sparse_quadrature,eqns,None)
+  regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+  R1 = np.zeros( np.shape(regionManager.RHS) )
+  R1[:] = regionManager.RHS[:]
+  # regionManager.a0[:] = regionManager.a[:]
+
+
+
+
+  #========= STAGE 2 ==========================
+  def STAGE2_unsteadyResidual(regionManager, v):
+    
+    regionManager.a[:] = v[:]
+    regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+    R2 = np.zeros(np.shape(regionManager.RHS))
+    R2[:] = regionManager.RHS[:]
+    Rstar = ( regionManager.a[:] - regionManager.a0 ) - regionManager.dt*( a21*R1 + gam*R2 )
+    Rstar_glob = gatherResid(Rstar,regionManager)
+    return Rstar,R2,Rstar_glob
+
+  nonlinear_solver.solve(STAGE2_unsteadyResidual, create_MF_Jacobian,regionManager,linear_solver,sparse_quadrature,eqns,None)
+  regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+  R2 = np.zeros( np.shape(regionManager.RHS) )
+  R2[:] = regionManager.RHS[:]
+  # regionManager.a0[:] = regionManager.a[:]
+
+
+
+
+  #============ STAGE 3 ===============
+  def STAGE3_unsteadyResidual(regionManager, v):
+      
+    regionManager.a[:] = v[:]
+    regionManager.getRHS_REGION_OUTER(regionManager,eqns)
+    R3 = np.zeros(np.shape(regionManager.RHS))
+    R3[:] = regionManager.RHS[:]
+    Rstar = ( regionManager.a[:] - regionManager.a0 ) - regionManager.dt*( a31*R1 + a32*R2 + gam*R3 )
+    Rstar_glob = gatherResid(Rstar,regionManager)
+    return Rstar,R3,Rstar_glob
+
+  nonlinear_solver.solve(STAGE3_unsteadyResidual, create_MF_Jacobian,regionManager,linear_solver,sparse_quadrature,eqns,None)
+
+  regionManager.t += regionManager.dt
+  regionManager.iteration += 1
